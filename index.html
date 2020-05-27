@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+      <div id="app">
+        <input v-model="message"/> <button @click="sendMessage">Send Message</button>
+        <h1>Chat History</h1>
+        <p v-for="message in messages">{{message}}</p>
+      </div>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <script>
+  var socket = io()
+  const app = new Vue({
+    el: "#app",
+    created: function() {
+        const messages = this.messages
+        socket.on("new message",function(message) {
+            messages.push(message)
+        })
+    },
+    data: {
+        message: '',
+        messages: ["message #1", "message #2"]
+    },
+    methods: {
+        sendMessage: function() {
+            socket.emit('new message', this.message);
+        }
+    }
+  })
+</script>
+</html>
